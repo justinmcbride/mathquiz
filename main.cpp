@@ -3,6 +3,8 @@
 #include <string>
 #include <ctime>
 
+#include "NoMoreGuesses.h"
+
 using namespace std;
 
 static 
@@ -56,8 +58,60 @@ int parseNumbers(char op, int first, int second) {
 	}
 }
 
-void playGame(int gameType) {
+int askQuestion(int first, int second) throw (NoMoreGuesses) {
+	try {
+		bool valid = false;
+		int counter = 1;
+		int maxGuesses = 3;
 
+		string inputString;
+		int guess;
+
+		while (!valid && counter < (maxGuesses + 1)) {
+			getline(cin, inputString);
+			stringstream ss = stringstream(inputString);
+			ss >> guess;
+			if (ss.good()) return guess;
+			counter++;
+		}
+		throw NoMoreGuesses("Exceeded the maximum number of guesses.");
+	}
+	catch (...) {
+		throw;
+	}
+}
+
+void playGame(int gameType) {
+	srand(time(NULL));
+
+	int nQuestions = 10;
+	int maxNumber = 100;
+
+	for (int i = 0; i < nQuestions; i++) {
+		int first = (rand() % (maxNumber + 1));
+		int second = 0;
+
+		do {
+			second = (rand() % (maxNumber + 1));
+		} while (second == 0 && gameType == '/');
+
+		if (second > first) {
+			int temp = first;
+			first = second;
+			second = temp;
+		}
+
+		try {
+			int answer = parseNumbers(gameType, first, second);
+		} catch (NoMoreGuesses e) {
+			cout << e.what() << endl;
+		}
+
+		if (guess == answer) {
+			
+		}
+
+	}
 }
 
 int main() {
