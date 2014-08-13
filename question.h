@@ -15,6 +15,7 @@ public:
 	Question();
 
 	std::string ToString();
+	std::string ToStringWasWrong();
 private:
 
 };

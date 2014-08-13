@@ -64,7 +64,7 @@ int inputGameLevel() {
 	bool valid = false;
 	int counter = 0;
 	string inputStr;
-	char input;
+	int input;
 	while (!valid) {
 		if (counter == 3) {
 			cout << endl;
@@ -75,10 +75,13 @@ int inputGameLevel() {
 		cout << "Enter the game level you desire: ";
 		getline(cin, inputStr);
 		stringstream(inputStr) >> input;
-		valid = validateGameTypeInput(input);
+		valid = validateGameLevelInput(input);
 		counter++;
 	}
-	return input;
+	if (input == 1) return 10;
+	else if (input == 2) return 100;
+	else if (input == 3) return 1000;
+	else return 10000;
 }
 
 int parseNumbers(char op, int first, int second) {
@@ -126,11 +129,8 @@ s_answer askQuestion(char gameType, int first, int second) throw (NoMoreGuesses)
 	}
 }
 
-void playGame(char gameType) {
+void playGame(char gameType, int nQuestions, int maxNumber) {
 	srand(time(NULL));
-
-	int nQuestions = 10;
-	int maxNumber = 100;
 
 	list<Question> questions;
 
@@ -189,13 +189,25 @@ void playGame(char gameType) {
 	} // end game loop
 
 	cout << endl << "Answers correct: " << nQuestions - wrongAnswers << "/" << nQuestions << endl;
+	double avgTime = totalTimeTaken / (double)(nQuestions - failedQuestions);
+	cout << "Average time per question, ignoring skipped questions: " << avgTime << endl;
+	if (wrongAnswers > 0) {
+		cout << "Incorrect questions:" << endl;
+		for (list<Question>::iterator it = questions.begin(); it != questions.end(); it++) {
+			if (!(it->guessedAnswer == it->correctAnswer)) {
+				cout << "\t" << it->ToString() << " : " << it->ToStringWasWrong();
+			}
+		}
+	}
 }
 
 int main() {
 	cout << "Welcome to the game.." << endl;
 	printGameMenu();
 	char gameType = inputMathType();
-	playGame(gameType);
+	printGameLevels();
+	int maxNumber = inputGameLevel();
+	playGame(gameType, 15, maxNumber);
 	return 0;
 }
 
