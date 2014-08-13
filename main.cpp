@@ -33,6 +33,7 @@ char inputMathType() {
 	char input;
 	while (!valid) {
 		if (counter == 3) {
+			cout << endl;
 			printGameMenu();
 			cout << "You need to enter the operator associated with the game type.." << endl;
 			counter = 0;
@@ -97,6 +98,9 @@ void playGame(char gameType) {
 	int nQuestions = 10;
 	int maxNumber = 100;
 
+	int failedQuestions = 0;
+	double totalTimeTaken = 0;
+
 	for (int i = 0; i < nQuestions; i++) {
 		int first = (rand() % (maxNumber + 1));
 		int second = 0;
@@ -125,9 +129,13 @@ void playGame(char gameType) {
 		}
 
 		if (guess == correctAnswer) {
-			cout << "\t" << "Correct with time " << timeTaken << endl;
+			cout << "\t" << "Correct. Time taken: " << timeTaken << "seconds." << endl;
+			totalTimeTaken += timeTaken;
 		} else if (!failed) {
-			cout << "\t" << "Wrong.. Inputted " << guess << " but the answer was " << correctAnswer << endl;
+			cout << "\t" << "Wrong.. the answer was " << correctAnswer << "." << endl;
+			totalTimeTaken += timeTaken;
+		} else if (failed) {
+			failedQuestions++;
 		}
 
 	}
