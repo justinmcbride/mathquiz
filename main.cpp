@@ -2,6 +2,7 @@
 #include <sstream>
 #include <string>
 #include <ctime>
+#include <list>
 
 #include "NoMoreGuesses.h"
 #include "question.h"
@@ -21,7 +22,19 @@ void printGameMenu() {
 	cout << "\t" << "( / ) Division" << endl;
 }
 
-bool checkInput(int input) {
+void printGameLevels() {
+	cout << "The levels of the game are:" << endl;
+	cout << "\t" << "1. Numbers ranging 0 - 10" << endl;
+	cout << "\t" << "2. Numbers ranging 0 - 100" << endl;
+	cout << "\t" << "3. Numbers ranging 0 - 1000" << endl;
+}
+
+bool validateGameLevelInput(int input) {
+	if (input == 1 || input == 2 || input == 3) return true;
+	else return false;
+}
+
+bool validateGameTypeInput(int input) {
 	if (input == '+' || input == '-' || input == '*' || input == '/') return true;
 	else return false;
 }
@@ -41,7 +54,28 @@ char inputMathType() {
 		cout << "Enter the game type you desire: ";
 		getline(cin, inputStr);
 		stringstream(inputStr) >> input;
-		valid = checkInput(input);
+		valid = validateGameTypeInput(input);
+		counter++;
+	}
+	return input;
+}
+
+int inputGameLevel() {
+	bool valid = false;
+	int counter = 0;
+	string inputStr;
+	char input;
+	while (!valid) {
+		if (counter == 3) {
+			cout << endl;
+			printGameLevels();
+			cout << "You need to enter the number associated with the game level.." << endl;
+			counter = 0;
+		}
+		cout << "Enter the game level you desire: ";
+		getline(cin, inputStr);
+		stringstream(inputStr) >> input;
+		valid = validateGameTypeInput(input);
 		counter++;
 	}
 	return input;
@@ -79,7 +113,7 @@ s_answer askQuestion(char gameType, int first, int second) throw (NoMoreGuesses)
 			stringstream ss(inputString);
 			ss >> guess;
 			if (!ss.fail()) {
-				time(&end);
+				time(&end); // end the timing
 				s_answer value = {guess, difftime(end, start)};
 				return value;
 			}
@@ -98,7 +132,10 @@ void playGame(char gameType) {
 	int nQuestions = 10;
 	int maxNumber = 100;
 
+	list<Question> questions;
+
 	int failedQuestions = 0;
+	int wrongAnswers = 0;
 	double totalTimeTaken = 0;
 
 	for (int i = 0; i < nQuestions; i++) {
@@ -129,16 +166,29 @@ void playGame(char gameType) {
 		}
 
 		if (guess == correctAnswer) {
-			cout << "\t" << "Correct. Time taken: " << timeTaken << "seconds." << endl;
+			cout << "\t" << "Correct. Time taken: " << timeTaken << " seconds." << endl;
 			totalTimeTaken += timeTaken;
 		} else if (!failed) {
 			cout << "\t" << "Wrong.. the answer was " << correctAnswer << "." << endl;
 			totalTimeTaken += timeTaken;
+			wrongAnswers++;
 		} else if (failed) {
 			failedQuestions++;
 		}
 
-	}
+		Question thisQuestion;
+		thisQuestion.firstNumber = first;
+		thisQuestion.secondNumber = second;
+		thisQuestion.op = gameType;
+		thisQuestion.timeTaken = timeTaken;
+		thisQuestion.guessedAnswer = guess;
+		thisQuestion.correctAnswer = correctAnswer;
+		thisQuestion.failed = failed;
+
+		questions.push_front(thisQuestion);
+	} // end game loop
+
+	cout << endl << "Answers correct: " << nQuestions - wrongAnswers << "/" << nQuestions << endl;
 }
 
 int main() {
