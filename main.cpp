@@ -7,8 +7,6 @@
 
 using namespace std;
 
-static 
-
 void printGameMenu() {
 	cout << "The game modes are: " << endl;
 	cout << "\t" << "1. Addition" << endl;
@@ -21,7 +19,6 @@ bool checkInput(int input) {
 	if (input == 1 || input == 2 || input == 3 || input == 4) return true;
 	else return false;
 }
-
 
 char inputMathType() {
 	bool valid = false;
