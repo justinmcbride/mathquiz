@@ -1,3 +1,5 @@
+#include <string>
+
 class Question {
 public:
 	int firstNumber;
@@ -7,6 +9,12 @@ public:
 	int guessedAnswer;
 	int correctAnswer;
 	double timeTaken;
+
+	bool failed;
+
+	Question();
+
+	std::string ToString();
 private:
 
 };
