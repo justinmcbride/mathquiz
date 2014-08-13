@@ -1,6 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <ctime>
 
 using namespace std;
 
@@ -40,10 +41,30 @@ int inputMathType() {
 	return input;
 }
 
+int parseNumbers(char op, int first, int second) {
+	switch(op) {
+		case '+':
+			return first + second;
+		case '-':
+			return first - second;
+		case '*':
+			return first * second;
+		case '/':
+			return first / second;
+		default:
+			return 0;
+	}
+}
+
+void playGame(int gameType) {
+
+}
+
 int main() {
 	cout << "Welcome to the game.." << endl;
 	printGameMenu();
 	int gameType = inputMathType();
+	playGame(gameType);
 	return 0;
 }
 
