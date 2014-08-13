@@ -23,7 +23,7 @@ bool checkInput(int input) {
 }
 
 
-int inputMathType() {
+char inputMathType() {
 	bool valid = false;
 	int counter = 0;
 	string inputStr;
@@ -40,7 +40,18 @@ int inputMathType() {
 		stringstream(inputStr) >> input;
 		valid = checkInput(input);
 	}
-	return input;
+	switch(input) {
+		case 1:
+			return '+';
+		case 2:
+			return '-';
+		case 3:
+			return '*';
+		case 4:
+			return '/';
+		default:
+			return 0;
+	}
 }
 
 int parseNumbers(char op, int first, int second) {
@@ -58,7 +69,7 @@ int parseNumbers(char op, int first, int second) {
 	}
 }
 
-int askQuestion(int first, int second) throw (NoMoreGuesses) {
+int askQuestion(char gameType, int first, int second) throw (NoMoreGuesses) {
 	try {
 		bool valid = false;
 		int counter = 1;
@@ -68,10 +79,11 @@ int askQuestion(int first, int second) throw (NoMoreGuesses) {
 		int guess;
 
 		while (!valid && counter < (maxGuesses + 1)) {
+			cout << first << " " << gameType << " " << second << " = ";
 			getline(cin, inputString);
-			stringstream ss = stringstream(inputString);
+			stringstream ss(inputString);
 			ss >> guess;
-			if (ss.good()) return guess;
+			if (!ss.fail()) return guess;
 			counter++;
 		}
 		throw NoMoreGuesses("Exceeded the maximum number of guesses.");
@@ -81,7 +93,7 @@ int askQuestion(int first, int second) throw (NoMoreGuesses) {
 	}
 }
 
-void playGame(int gameType) {
+void playGame(char gameType) {
 	srand(time(NULL));
 
 	int nQuestions = 10;
@@ -90,6 +102,8 @@ void playGame(int gameType) {
 	for (int i = 0; i < nQuestions; i++) {
 		int first = (rand() % (maxNumber + 1));
 		int second = 0;
+		int guess;
+		bool failed = false;
 
 		do {
 			second = (rand() % (maxNumber + 1));
@@ -101,14 +115,17 @@ void playGame(int gameType) {
 			second = temp;
 		}
 
+		int answer = parseNumbers(gameType, first, second);
 		try {
-			int answer = parseNumbers(gameType, first, second);
+			guess = askQuestion(gameType, first, second);
 		} catch (NoMoreGuesses e) {
 			cout << e.what() << endl;
 		}
 
 		if (guess == answer) {
-			
+			cout << "Correct" << endl;
+		} else if (!failed) {
+			cout << "Wrong.. Inputted " << guess << " but answer was " << answer << endl;
 		}
 
 	}
@@ -117,7 +134,7 @@ void playGame(int gameType) {
 int main() {
 	cout << "Welcome to the game.." << endl;
 	printGameMenu();
-	int gameType = inputMathType();
+	char gameType = inputMathType();
 	playGame(gameType);
 	return 0;
 }
