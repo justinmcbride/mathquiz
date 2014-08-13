@@ -15,14 +15,14 @@ struct s_answer {
 
 void printGameMenu() {
 	cout << "The game modes are: " << endl;
-	cout << "\t" << "1. Addition" << endl;
-	cout << "\t" << "2. Subtraction" << endl;
-	cout << "\t" << "3. Multiplication" << endl;
-	cout << "\t" << "4. Division" << endl;
+	cout << "\t" << "( + ) Addition" << endl;
+	cout << "\t" << "( - ) Subtraction" << endl;
+	cout << "\t" << "( * ) Multiplication" << endl;
+	cout << "\t" << "( / ) Division" << endl;
 }
 
 bool checkInput(int input) {
-	if (input == 1 || input == 2 || input == 3 || input == 4) return true;
+	if (input == '+' || input == '-' || input == '*' || input == '/') return true;
 	else return false;
 }
 
@@ -30,31 +30,20 @@ char inputMathType() {
 	bool valid = false;
 	int counter = 0;
 	string inputStr;
-	int input;
+	char input;
 	while (!valid) {
-		counter++;
 		if (counter == 3) {
 			printGameMenu();
-			cout << "You need to enter the number associated with the game type.." << endl;
+			cout << "You need to enter the operator associated with the game type.." << endl;
 			counter = 0;
 		}
 		cout << "Enter the game type you desire: ";
 		getline(cin, inputStr);
 		stringstream(inputStr) >> input;
 		valid = checkInput(input);
+		counter++;
 	}
-	switch(input) {
-		case 1:
-			return '+';
-		case 2:
-			return '-';
-		case 3:
-			return '*';
-		case 4:
-			return '/';
-		default:
-			return 0;
-	}
+	return input;
 }
 
 int parseNumbers(char op, int first, int second) {
