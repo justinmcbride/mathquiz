@@ -4,8 +4,14 @@
 #include <ctime>
 
 #include "NoMoreGuesses.h"
+#include "question.h"
 
 using namespace std;
+
+struct s_answer {
+	int guess;
+	double time;
+};
 
 void printGameMenu() {
 	cout << "The game modes are: " << endl;
@@ -66,21 +72,27 @@ int parseNumbers(char op, int first, int second) {
 	}
 }
 
-int askQuestion(char gameType, int first, int second) throw (NoMoreGuesses) {
+s_answer askQuestion(char gameType, int first, int second) throw (NoMoreGuesses) {
+	bool valid = false;
+	int counter = 1;
+	int maxGuesses = 3;
+
+	string inputString;
+	int guess;
+	time_t start, end;
+
 	try {
-		bool valid = false;
-		int counter = 1;
-		int maxGuesses = 3;
-
-		string inputString;
-		int guess;
-
 		while (!valid && counter < (maxGuesses + 1)) {
 			cout << first << " " << gameType << " " << second << " = ";
+			time(&start); // start timing
 			getline(cin, inputString);
 			stringstream ss(inputString);
 			ss >> guess;
-			if (!ss.fail()) return guess;
+			if (!ss.fail()) {
+				time(&end);
+				s_answer value = {guess, difftime(end, start)};
+				return value;
+			}
 			counter++;
 		}
 		throw NoMoreGuesses("Exceeded the maximum number of guesses.");
@@ -99,7 +111,9 @@ void playGame(char gameType) {
 	for (int i = 0; i < nQuestions; i++) {
 		int first = (rand() % (maxNumber + 1));
 		int second = 0;
+		s_answer returnedAnswer;
 		int guess;
+		double timeTaken;
 		bool failed = false;
 
 		do {
@@ -112,17 +126,19 @@ void playGame(char gameType) {
 			second = temp;
 		}
 
-		int answer = parseNumbers(gameType, first, second);
+		int correctAnswer = parseNumbers(gameType, first, second);
 		try {
-			guess = askQuestion(gameType, first, second);
+			returnedAnswer =  askQuestion(gameType, first, second);
+			guess = returnedAnswer.guess;
+			timeTaken = returnedAnswer.time;
 		} catch (NoMoreGuesses e) {
 			cout << e.what() << endl;
 		}
 
-		if (guess == answer) {
-			cout << "Correct" << endl;
+		if (guess == correctAnswer) {
+			cout << "\t" << "Correct with time " << timeTaken << endl;
 		} else if (!failed) {
-			cout << "Wrong.. Inputted " << guess << " but answer was " << answer << endl;
+			cout << "\t" << "Wrong.. Inputted " << guess << " but the answer was " << correctAnswer << endl;
 		}
 
 	}
